@@ -19,22 +19,21 @@ function GetAllUsers()
 }
 
 
-function GetUserIdFromUserAndPassword($username, $password) {
+function GetUserIdFromUserAndPassword($username, $password)
+{
   global $PDO;
-
-  // Préparer la requête SQL pour sélectionner l'utilisateur par nom d'utilisateur
-  $stmt = $PDO->prepare("SELECT id, password FROM user WHERE nickname = :username");
-  $stmt->bindParam(':username', $username);
-  $stmt->execute();
-
-  // Récupérer le résultat de la requête
-  $user = $stmt->fetch();
-
-  // Vérifier si l'utilisateur existe et si le mot de passe est correct
-  if ($user && password_verify($password, $user['password'])) {
-      return $user['id'];  // Retourner l'id de l'utilisateur
+  $response = $PDO->prepare("SELECT id FROM user WHERE nickname = :username AND password = MD5(:password) ");
+  $response->execute(
+    array(
+      "username" => $username,
+      "password" => $password
+    )
+  );
+  if ($response->rowCount() == 1) {
+    $row = $response->fetch();
+    return $row['id'];
   } else {
-      return -1;  // Retourner -1 si l'utilisateur n'existe pas ou si le mot de passe est incorrect
+    return -1;
   }
 }
 
@@ -53,7 +52,7 @@ function IsNicknameFree($nickname)
 function CreateNewUser($nickname, $password)
 {
   global $PDO;
-  $response = $PDO->prepare("INSERT INTO user (nickname, password) values (:nickname , :password )");
+  $response = $PDO->prepare("INSERT INTO user (nickname, password) values (:nickname , MD5(:password) )");
   $response->execute(
     array(
       "nickname" => $nickname,
