@@ -30,8 +30,12 @@ switch ($action) {
     break;
 
   case 'logout':
-    // code...
+    if (isset($_SESSION['userId'])) {
+      unset($_SESSION['userId']);
+    }
+    header('Location: ?action=display');
     break;
+  
 
   case 'login':
     include "../models/UserManager.php";
