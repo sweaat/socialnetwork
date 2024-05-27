@@ -20,7 +20,7 @@ function GetUserIdFromUserAndPassword($username, $password) {
     global $PDO;
 
     // Préparer la requête SQL pour sélectionner l'utilisateur par nom d'utilisateur
-    $stmt = $PDO->prepare("SELECT id, password FROM user WHERE username = :username");
+    $stmt = $PDO->prepare("SELECT id, password FROM user WHERE nickname = :username");
     $stmt->bindParam(':username', $username);
     $stmt->execute();
 

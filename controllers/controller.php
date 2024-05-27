@@ -16,11 +16,27 @@ switch ($action) {
     break;
 
   case 'login':
-    // code...
+    include "../models/UserManager.php";
+    if (isset($_POST['username']) && isset($_POST['password'])) {
+      $userId = GetUserIdFromUserAndPassword($_POST['username'], $_POST['password']);
+      if ($userId > 0) {
+        $_SESSION['userId'] = $userId;
+        header('Location: ?action=display');
+      } else {
+        $errorMsg = "Wrong login and/or password.";
+        include "../views/LoginForm.php";
+      }
+    } else {
+      include "../views/LoginForm.php";
+    }
     break;
 
   case 'newMsg':
-    // code...
+    include "../models/PostManager.php";
+    if (isset($_SESSION['userId']) && isset($_POST['msg'])) {
+      CreateNewPost($_SESSION['userId'], $_POST['msg']);
+    }
+    header('Location: ?action=display');
     break;
 
   case 'newComment':
