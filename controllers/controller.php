@@ -5,7 +5,10 @@ $action = $_GET["action"] ?? "display";
 switch ($action) {
 
   case 'register':
-    // code...
+    if (isset($_SESSION['userId'])) {
+      unset($_SESSION['userId']);
+    }
+    header('Location: ?action=display');
     break;
 
   case 'logout':
@@ -24,13 +27,16 @@ switch ($action) {
     // code...
     break;
 
-  case 'display':
-  default:
-    include "../models/PostManager.php";
-    $posts = GetAllPosts();
-
-    include "../models/CommentManager.php";
-    $comments = array();
+    case 'display':
+      default:
+          include "../models/PostManager.php";
+          if (isset($_GET['search'])) {
+            $posts = SearchInPosts($_GET['search']);
+          } else {
+            $posts = GetAllPosts();
+          }
+          
+          include "../models/CommentManager.php";
 
     // ===================HARDCODED PART===========================
     // format idPost => array of comments
